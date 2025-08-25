@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup Form</title>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <section>
+    <form>
+      <h1>Sign Up</h1>
+        <div id="status-message" style="color:white; text-align: center; margin-bottom: 15px;"></div>
+        <div class="inputbox">
+            <ion-icon name="person-outline"></ion-icon>
+            <input type="text" id= "username" name="username" required>
+            <label for="">Name</label>
+        </div>
+        <div class="inputbox">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" id="email" name="email" required>
+            <label for="">Email</label>
+        </div>
+        
+        <div class="inputbox">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="password" id="password" name="password" required>
+            <label for="">Password</label>
+        </div>  
+        <div class="inputbox">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input type="password" id="passwordcon" name="passwordcon" required>
+          <label for="">Confirm Password</label>
+      </div>  
+        <button id="submit" type="submit">Sign Up</button>
+      <div class="register">
+        <p>Already have an account? <a href="/req/login">Log In</a></p>
+      </div>
+    </form>
+  </section>
+</body>
+</html>
+<script>
+  const form = document.querySelector('form');
+  const statusMessage = document.getElementById('status-message');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('passwordcon').value;
+    const email = document.getElementById('email').value;
+
+    if (password !== confirmPassword) {
+      statusMessage.textContent = 'Passwords do not match.';
+      statusMessage.style.color = 'red';
+      return;
+    }
+
+    const data = {
+      username,
+      email,
+      password
+    };
+
+    fetch('/req/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        statusMessage.textContent = 'Registration successful! You can now log in.';
+        statusMessage.style.color = 'green';
+        form.reset();
+      } else {
+        return response.text().then(text => {
+          statusMessage.textContent = text;
+          statusMessage.style.color = 'red';
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      statusMessage.textContent = 'An error occurred. Please try again.';
+      statusMessage.style.color = 'red';
+    });
+  });
+</script>
